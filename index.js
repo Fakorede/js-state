@@ -54,15 +54,18 @@ const ast = parser.parse(code, {
 traverse(ast, {
   enter(path) {
     if (t.isVariableDeclarator(path.node)) {
-        path.node.id.elements.forEach((element, index) => {
-            if (index === 0) stateVariables.push(element.name);
-        });
+        if (path.node.id.elements) {
+            path.node.id.elements.forEach((element, index) => {
+                if (index === 0) stateVariables.push(element.name);
+            });
+        } else {
+            stateVariables.push(path.node.id.name);
+        }
     }
   },
 });
 
-console.log("State variables found in the code are:")
-
-stateVariables.forEach(variable => {
-    console.log(variable)
-});
+if (stateVariables.length) {
+    console.log("State variables found in the code are:")
+    stateVariables.forEach(variable => console.log(variable));
+}
